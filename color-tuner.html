@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>算色工具 (port of B2.sh)</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", sans-serif; margin: 40px; background: #15161a; color: #ddeaf0; }
+  h1 { font-size: 18px; font-weight: 500; margin: 0 0 16px; }
+  .row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  input[type=text] { width: 140px; padding: 8px 10px; border-radius: 8px; border: 1px solid #333; background: #1f2026; color: #ddeaf0; font: 14px/1 ui-monospace, Menlo, monospace; }
+  input[type=color] { width: 48px; height: 36px; border: 0; background: transparent; padding: 0; }
+  button { padding: 8px 14px; border-radius: 8px; border: 0; background: #2b82f6; color: #fff; cursor: pointer; }
+  .swatch { width: 80px; height: 80px; border-radius: 12px; border: 1px solid #333; }
+  table { border-collapse: collapse; margin-top: 8px; }
+  td { padding: 6px 12px; border-bottom: 1px solid #2a2b30; font: 13px/1.6 ui-monospace, Menlo, monospace; }
+  td:first-child { color: #888; width: 90px; }
+  .name { font-size: 28px; font-weight: 600; margin-top: 8px; }
+  .hint { color: #666; font-size: 12px; margin-top: 24px; }
+</style>
+</head>
+<body>
+  <h1>算色工具 — HEX → 中文颜色名（B2.sh 逻辑移植）</h1>
+
+  <div class="row">
+    <input id="hex" type="text" value="#FF8800" placeholder="#RRGGBB 或 RRGGBB" />
+    <input id="picker" type="color" value="#ff8800" />
+    <button id="run">计算</button>
+    <div id="swatch" class="swatch" style="background:#ff8800"></div>
+  </div>
+
+  <table>
+    <tr><td>HEX</td><td id="o-hex">—</td></tr>
+    <tr><td>RGB</td><td id="o-rgb">—</td></tr>
+    <tr><td>HSB</td><td id="o-hsb">—</td></tr>
+  </table>
+
+  <div class="name" id="o-name">—</div>
+
+  <p class="hint">规则与 <code>B2.sh</code> 完全一致：S≤5 或 (S≤20 且 B&lt;70)→灰；H 区间映射橙/黄/绿/蓝/紫/红。</p>
+
+<script src="assets/color-tool.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+function render() {
+  const r = window.colorTool.classify($('hex').value);
+  if (!r) { $('o-name').textContent = '无效 HEX'; return; }
+  $('o-hex').textContent = '#' + r.hex;
+  $('o-rgb').textContent = `(${r.r}, ${r.g}, ${r.b})`;
+  $('o-hsb').textContent = `(${r.h}°, ${r.s}%, ${r.b}%)`;
+  $('o-name').textContent = r.name;
+  $('swatch').style.background = '#' + r.hex;
+  $('picker').value = '#' + r.hex.toLowerCase();
+}
+$('run').addEventListener('click', render);
+$('hex').addEventListener('change', render);
+$('picker').addEventListener('input', () => { $('hex').value = $('picker').value.toUpperCase(); render(); });
+render();
+</script>
+</body>
+</html>

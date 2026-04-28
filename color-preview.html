@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>算色预览 - 即梦</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; background: #0c0c10; color: #e6edf3; font-family: -apple-system, "PingFang SC", system-ui, sans-serif; }
+  
+  .app { display: grid; grid-template-columns: 350px 1fr; height: 100vh; gap: 0; }
+
+  /* ================== 左侧：控制面板 ================== */
+  .panel { 
+    padding: 16px 18px; 
+    overflow-y: auto; 
+    border-right: 1px solid #1f2329; 
+    background: #111418;
+  }
+  
+  .panel h1 { 
+    font-size: 14px; 
+    margin: 0 0 14px; 
+    color: #8aa1b8; 
+    letter-spacing: .5px; 
+    text-transform: uppercase; 
+  }
+  
+  .group { 
+    background: #161a20; 
+    border: 1px solid #20262e; 
+    border-radius: 10px; 
+    padding: 12px 14px; 
+    margin-bottom: 14px; 
+  }
+  
+  .group h2 { 
+    font-size: 12px; 
+    margin: 0 0 10px; 
+    color: #c4d3e2; 
+    text-transform: uppercase; 
+    letter-spacing: .8px; 
+  }
+  
+  .row { 
+    display: grid; 
+    grid-template-columns: 1fr 100px; 
+    gap: 8px; 
+    align-items: center; 
+    margin-bottom: 8px; 
+  }
+  
+  .row label { 
+    font-size: 12px; 
+    color: #9aa8b6; 
+  }
+  
+  .row.full { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .row input[type="text"] { 
+    background: #0d1014; 
+    color: #cfe1ff; 
+    border: 1px solid #2a313a; 
+    border-radius: 6px; 
+    padding: 6px 8px; 
+    font-size: 12px; 
+  }
+  
+  .row input[type="file"] { 
+    font-size: 12px; 
+  }
+  
+  .row .value { 
+    font-size: 11px; 
+    color: #cfe1ff; 
+    font-variant-numeric: tabular-nums; 
+    text-align: right; 
+  }
+  
+  .swatch { 
+    display: inline-block; 
+    width: 24px; 
+    height: 24px; 
+    border-radius: 4px; 
+    vertical-align: middle; 
+    margin-right: 8px; 
+    border: 1px solid #2a313a; 
+  }
+  
+  .color-info {
+    background: #0d1014;
+    border: 1px solid #2a313a;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+  
+  .color-info div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  
+  .color-info div:last-child {
+    margin-bottom: 0;
+  }
+
+  .code-output {
+    width: 100%;
+    min-height: 150px;
+    background: #0d1014;
+    color: #cfe1ff;
+    border: 1px solid #2a313a;
+    border-radius: 6px;
+    padding: 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .actions button {
+    flex: 1;
+    background: #1f6feb;
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .actions button.secondary {
+    background: #30363d;
+  }
+
+  /* ================== 右侧：预览 ================== */
+  .stage { 
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: flex-start; 
+    padding: 20px; 
+    background: radial-gradient(circle at 30% 30%, #1a1f26 0%, #0c0c10 70%);
+    overflow-y: auto;
+  }
+  
+  .frame {
+    position: relative;
+    width: 390px; 
+    height: 844px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0,0,0,.6);
+    background: #000;
+    margin-bottom: 20px;
+  }
+
+  /* 背景层 */
+  .bg-preview {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(30px) brightness(0.55);
+    transform: scale(1.2) translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* 背景遮罩叠加 */
+  .bg-preview::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.20) 1.19%, rgba(0, 0, 0, 0.10) 96.23%);
+    -webkit-backdrop-filter: blur(100px);
+    backdrop-filter: blur(100px);
+    pointer-events: none;
+  }
+
+  /* 前景内容 */
+  .fg-preview {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 40px;
+    color: hsl(var(--theme-h, 200), 30%, 92%);
+    text-align: center;
+    z-index: 2;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .card-demo {
+    width: 174px;
+    height: 169px;
+    border-radius: 24px;
+    background: hsla(var(--theme-h, 200), 30%, 6%, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    color: hsl(var(--theme-h, 200), 30%, 92%);
+  }
+
+  .card-desc {
+    font-size: 12px;
+    line-height: 18px;
+    color: hsla(var(--theme-h, 200), 30%, 92%, 0.55);
+  }
+
+  .icon-demo {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .icon-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+    background-color: hsl(var(--theme-h, 200), 30%, 92%);
+    border-radius: 4px;
+  }
+
+  .icon-label {
+    font-size: 10px;
+    color: hsla(var(--theme-h, 200), 30%, 92%, 0.6);
+  }
+
+  .info-box {
+    margin-top: 40px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: left;
+    font-size: 12px;
+    width: 100%;
+  }
+
+  .info-box div {
+    margin-bottom: 6px;
+  }
+
+  .info-box div:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-label {
+    color: #9aa8b6;
+    display: inline-block;
+    width: 60px;
+  }
+
+  .info-value {
+    color: #cfe1ff;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================== 左侧：控制面板 ================== -->
+  <aside class="panel">
+    <h1>算色预览工具</h1>
+
+    <div class="group">
+      <h2>背景图片</h2>
+      <div class="row full">
+        <label>选择图片</label>
+        <input type="file" id="bgFile" accept="image/*" />
+      </div>
+      <div class="row full">
+        <label>或输入 URL</label>
+        <input type="text" id="bgUrl" placeholder="https://..." />
+      </div>
+      <div class="row">
+        <button id="loadBtn" style="background: #1f6feb; color: #fff; border: 0; border-radius: 6px; padding: 8px 12px; font-size: 12px; cursor: pointer; width: 100%;">加载图片</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>算色结果</h2>
+      <div class="color-info">
+        <div>
+          <span>色调 (H)</span>
+          <span class="info-value" id="colorH">200</span>°
+        </div>
+        <div>
+          <span>饱和度 (S)</span>
+          <span class="info-value" id="colorS">30</span>%
+        </div>
+        <div>
+          <span>亮度 (B)</span>
+          <span class="info-value" id="colorB">70</span>%
+        </div>
+      </div>
+      <div style="margin-bottom: 8px;">
+        <label style="font-size: 11px; color: #9aa8b6;">主色色块</label>
+      </div>
+      <div class="swatch" id="colorSwatch" style="width: 100%; height: 40px; display: block; margin: 0;"></div>
+    </div>
+
+    <div class="group">
+      <h2>默认预设</h2>
+      <button id="preset1" style="width: 100%; background: #1f6feb; color: #fff; border: 0; border-radius: 6px; padding: 8px; font-size: 12px; cursor: pointer; margin-bottom: 8px;">海报 1</button>
+      <button id="preset2" style="width: 100%; background: #1f6feb; color: #fff; border: 0; border-radius: 6px; padding: 8px; font-size: 12px; cursor: pointer;">海报 2</button>
+    </div>
+
+    <div class="group">
+      <h2>说明</h2>
+      <div style="font-size: 11px; color: #8aa8b6; line-height: 1.6;">
+        <p>上传或输入背景图片 URL，工具会自动提取主色调，实时更新前景元素（文字、卡片、icon）的颜色。</p>
+        <p>色调值 (H) 通过 CSS 变量 <code style="background: #0d1014; padding: 2px 4px; border-radius: 2px;">--theme-h</code> 驱动所有颜色。</p>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>代码导出</h2>
+      <textarea id="codeOut" class="code-output" readonly></textarea>
+      <div class="actions">
+        <button id="copyCssBtn">复制 CSS</button>
+        <button id="copyVarBtn" class="secondary">复制变量</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================== 右侧：预览 ================== -->
+  <main class="stage">
+    <div class="frame" id="frame">
+      <div class="bg-preview" id="bgPreview"></div>
+      <div class="fg-preview">
+        <div class="title">请选择你想如何改编？</div>
+        
+        <div class="card-demo">
+          <div class="card-title">A 加入一起演</div>
+          <div class="card-desc">你站起来拦下自行车，直接开口就是一顿输出</div>
+        </div>
+
+        <div class="icon-demo">
+          <div class="icon-box">
+            <div class="icon"></div>
+            <div class="icon-label">箭头</div>
+          </div>
+          <div class="icon-box">
+            <div class="icon"></div>
+            <div class="icon-label">chevron</div>
+          </div>
+          <div class="icon-box">
+            <div class="icon"></div>
+            <div class="icon-label">重播</div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div><span class="info-label">色调:</span> <span class="info-value" id="infoH">200</span>°</div>
+          <div><span class="info-label">饱和度:</span> <span class="info-value" id="infoS">30</span>%</div>
+          <div><span class="info-label">亮度:</span> <span class="info-value" id="infoB">70</span>%</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/color-tool.js" defer></script>
+<script>
+(function () {
+  console.log('🚀 页面初始化开始');
+  
+  const frame = document.getElementById('frame');
+  const bgPreview = document.getElementById('bgPreview');
+  const colorH = document.getElementById('colorH');
+  const colorS = document.getElementById('colorS');
+  const colorB = document.getElementById('colorB');
+  const colorSwatch = document.getElementById('colorSwatch');
+  const infoH = document.getElementById('infoH');
+  const infoS = document.getElementById('infoS');
+  const infoB = document.getElementById('infoB');
+  const bgFile = document.getElementById('bgFile');
+  const bgUrl = document.getElementById('bgUrl');
+  const loadBtn = document.getElementById('loadBtn');
+  const codeOut = document.getElementById('codeOut');
+  const copyCssBtn = document.getElementById('copyCssBtn');
+  const copyVarBtn = document.getElementById('copyVarBtn');
+
+  console.log('✅ 所有 DOM 元素已获取');
+  console.log('  frame:', !!frame);
+  console.log('  bgPreview:', !!bgPreview);
+  console.log('  bgFile:', !!bgFile);
+  console.log('  bgUrl:', !!bgUrl);
+  console.log('  loadBtn:', !!loadBtn);
+
+  // 预设图片
+  const presets = {
+    preset1: 'assets/2242ac9f6f471954dc46f5b8cecfe80755c0a449.png',
+    preset2: 'assets/eb92d1d4b5ad13391f64f0f059e2907b36ccd570.png',
+  };
+
+  function extractColorFromImage(img) {
+    console.log('🔍 开始提取色调...');
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, 64, 64);
+
+      const imageData = ctx.getImageData(0, 0, 64, 64);
+      const data = imageData.data;
+      console.log('📊 图像数据长度:', data.length);
+
+      // 按色调进行直方图统计（36 个 10° 的桶）
+      const hueHist = new Array(36).fill(0);
+      const satHist = { count: 0, sum: 0 };
+      const brightHist = { count: 0, sum: 0 };
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i] / 255;
+        const g = data[i + 1] / 255;
+        const b = data[i + 2] / 255;
+        const a = data[i + 3] / 255;
+
+        if (a < 0.5) continue;
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const delta = max - min;
+
+        let h = 0;
+        if (delta > 0) {
+          if (max === r) h = ((g - b) / delta + (g < b ? 6 : 0)) * 60;
+          else if (max === g) h = ((b - r) / delta + 2) * 60;
+          else h = ((r - g) / delta + 4) * 60;
+        }
+
+        const s = max === 0 ? 0 : delta / max;
+        const bVal = max;
+
+        const bin = Math.floor(h / 10) % 36;
+        hueHist[bin] += s;
+
+        satHist.sum += s;
+        satHist.count++;
+        brightHist.sum += bVal;
+        brightHist.count++;
+      }
+
+      console.log('📈 统计像素数:', satHist.count);
+
+      // 如果没有有效像素，返回默认色调
+      if (satHist.count === 0) {
+        console.warn('⚠️ 没有有效像素，返回默认色调');
+        return { h: 200, s: 30, b: 70 };
+      }
+
+      // 找到加权最多的色调桶
+      let maxBin = 0;
+      let maxWeight = 0;
+      for (let i = 0; i < hueHist.length; i++) {
+        if (hueHist[i] > maxWeight) {
+          maxWeight = hueHist[i];
+          maxBin = i;
+        }
+      }
+
+      const resultH = Math.round((maxBin * 10 + 5) % 360);
+      const resultS = Math.round((satHist.sum / satHist.count) * 100);
+      const resultB = Math.round((brightHist.sum / brightHist.count) * 100);
+
+      console.log('📍 计算结果 - H:', resultH, 'S:', resultS, 'B:', resultB);
+
+      return { h: resultH, s: resultS, b: resultB };
+    } catch (e) {
+      console.error('❌ 色调提取异常:', e);
+      return { h: 200, s: 30, b: 70 };
+    }
+  }
+
+  function updateColor(h, s, b) {
+    frame.style.setProperty('--theme-h', h);
+    colorH.textContent = h;
+    colorS.textContent = s;
+    colorB.textContent = b;
+    infoH.textContent = h;
+    infoS.textContent = s;
+    infoB.textContent = b;
+
+    // 更新色块
+    const rgb = hslToRgb(h, s, b);
+    colorSwatch.style.background = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+
+    renderExportCode(h, s, b);
+  }
+
+  function renderExportCode(h, s, b) {
+    if (!codeOut) return;
+
+    codeOut.value = `:root {
+  --theme-h: ${h};
+  --theme-s: ${s}%;
+  --theme-b: ${b}%;
+}
+
+/* 前景文字 */
+.intergen-title,
+.choice-card__title,
+.feed-title,
+.replay-btn {
+  color: hsl(var(--theme-h), 30%, 92%);
+}
+
+/* 次级文字 */
+.choice-card__desc,
+.intergen-feed-header,
+.icon-label {
+  color: hsla(var(--theme-h), 30%, 92%, 0.55);
+}
+
+/* 图标 */
+.choice-card__arrow,
+.feed-arrow,
+.replay-icon,
+.icon {
+  background-color: hsl(var(--theme-h), 30%, 92%);
+}`;
+  }
+
+  async function copyText(text, btn, successLabel) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      if (codeOut) {
+        codeOut.focus();
+        codeOut.select();
+      }
+      document.execCommand('copy');
+    }
+
+    if (!btn) return;
+    const oldLabel = btn.textContent;
+    btn.textContent = successLabel;
+    setTimeout(() => {
+      btn.textContent = oldLabel;
+    }, 1200);
+  }
+
+  function hslToRgb(h, s, l) {
+    s /= 100;
+    l /= 100;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n) => {
+      const k = (n + h / 30) % 12;
+      return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    };
+    return {
+      r: Math.round(f(0) * 255),
+      g: Math.round(f(8) * 255),
+      b: Math.round(f(4) * 255),
+    };
+  }
+
+  function loadImage(src) {
+    console.log('🌐 加载图片 URL:', src);
+    const img = new Image();
+    // 只对外部 URL 设置 crossOrigin，本地资源不需要
+    if (src.startsWith('http')) {
+      img.crossOrigin = 'anonymous';
+    }
+    img.onload = function () {
+      console.log('✅ 图片加载成功，尺寸:', img.width, 'x', img.height);
+      bgPreview.style.backgroundImage = `url("${src}")`;
+      const color = extractColorFromImage(img);
+      updateColor(color.h, color.s, color.b);
+      console.log('✅ 颜色已更新');
+    };
+    img.onerror = function () {
+      console.error('❌ 图片加载失败:', src);
+      alert('图片加载失败，请检查 URL 或 CORS 限制');
+    };
+    img.src = src;
+  }
+
+  function loadLocalFile(file) {
+    if (!file) {
+      console.error('❌ 未选择文件');
+      alert('请选择文件');
+      return;
+    }
+
+    console.log('📁 开始加载文件:', file.name, file.size, 'bytes');
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      console.log('✅ 文件读取完成');
+      const dataUrl = event.target.result;
+      bgPreview.style.backgroundImage = `url("${dataUrl}")`;
+      console.log('✅ 背景图片 CSS 已设置');
+      
+      // 用 Image 对象加载以获取尺寸，然后提取颜色
+      const img = new Image();
+      img.onload = function () {
+        console.log('✅ 图片对象加载完成, 尺寸:', img.width, 'x', img.height);
+        try {
+          const color = extractColorFromImage(img);
+          console.log('✅ 色调提取成功:', color);
+          updateColor(color.h, color.s, color.b);
+          console.log('✅ UI 已更新');
+        } catch (e) {
+          console.error('❌ 色调提取失败:', e);
+          alert('色调提取失败: ' + e.message);
+        }
+      };
+      img.onerror = () => {
+        console.error('❌ 图片对象加载失败');
+        alert('图片格式不支持或加载失败');
+      };
+      console.log('📍 正在加载图片对象...');
+      img.src = dataUrl;
+    };
+    reader.onerror = () => {
+      console.error('❌ 文件读取失败');
+      alert('文件读取失败');
+    };
+    console.log('📍 正在读取文件...');
+    reader.readAsDataURL(file);
+  }
+
+  // 事件绑定
+  loadBtn.addEventListener('click', () => {
+    console.log('🔘 加载按钮被点击');
+    const file = bgFile.files[0];
+    if (file) {
+      console.log('📁 使用文件模式');
+      loadLocalFile(file);
+    } else {
+      const url = bgUrl.value.trim();
+      if (url) {
+        console.log('🌐 使用 URL 模式');
+        loadImage(url);
+      } else {
+        alert('请选择本地文件或输入图片 URL');
+      }
+    }
+  });
+
+  // 文件选择后自动加载
+  bgFile.addEventListener('change', (e) => {
+    console.log('📌 change 事件触发，已选择文件');
+    const file = e.target.files[0];
+    console.log('📌 获取文件对象:', file);
+    if (file) {
+      loadLocalFile(file);
+    } else {
+      console.error('❌ 未找到文件');
+    }
+  });
+
+  document.getElementById('preset1').addEventListener('click', () => {
+    console.log('🎬 加载预设 1');
+    loadImage(presets.preset1);
+  });
+
+  document.getElementById('preset2').addEventListener('click', () => {
+    console.log('🎬 加载预设 2');
+    loadImage(presets.preset2);
+  });
+
+  if (copyCssBtn) {
+    copyCssBtn.addEventListener('click', () => {
+      copyText(codeOut.value, copyCssBtn, '已复制');
+    });
+  }
+
+  if (copyVarBtn) {
+    copyVarBtn.addEventListener('click', () => {
+      const h = colorH.textContent || '200';
+      const s = colorS.textContent || '30';
+      const b = colorB.textContent || '70';
+      const vars = `:root {\n  --theme-h: ${h};\n  --theme-s: ${s}%;\n  --theme-b: ${b}%;\n}`;
+      copyText(vars, copyVarBtn, '已复制');
+    });
+  }
+
+  // 初始加载 preset1
+  console.log('📍 初始化：加载预设 1');
+  loadImage(presets.preset1);
+  
+  console.log('✅ 页面初始化完成！可以开始上传图片了');
+})();
+</script>
+</body>
+</html>
