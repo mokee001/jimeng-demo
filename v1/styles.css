@@ -1,0 +1,1144 @@
+/* ============ Reset & 基础 ============ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+html, body {
+  height: 100%;
+  font-family: "PingFang SC", "PingFang HK", -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: #1a1a1a;
+  color: #fff;
+  overflow: hidden;
+}
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+img { display: block; }
+
+/* ============ Frame 8:6983 ============ */
+.frame {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  background: #15161a;
+  border-radius: 36px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ============ 顶部白色导航 0,0 390x91 ============ */
+.top-nav {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 390px;
+  background: #ffffff;
+  z-index: 20;
+}
+
+/* 状态栏 47px */
+.status-bar {
+  position: relative;
+  height: 47px;
+  width: 100%;
+}
+.time {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 88px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "PingFang HK", "PingFang SC", sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 18px;
+  color: #090c14;
+  letter-spacing: -0.051px;
+}
+.levels {
+  position: absolute;
+  right: 14.84px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  height: 11px;
+}
+.cellular { width: 17px; height: 10.667px; margin-right: 7.33px; }
+.wifi     { width: 15.333px; height: 11px; margin-right: 7.34px; }
+
+.battery {
+  position: relative;
+  width: 22px;
+  height: 11.333px;
+  display: flex;
+  align-items: center;
+}
+.bat-border {
+  position: absolute;
+  inset: 0;
+  width: 21px;
+  height: 10.333px;
+}
+.bat-cap {
+  position: absolute;
+  right: -1.5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.328px;
+  height: 4px;
+}
+.bat-fill {
+  position: absolute;
+  left: 1.83px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 7.333px;
+}
+
+/* 导航内容 44px */
+.nav-content {
+  position: relative;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+}
+.nav-left,
+.nav-right {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.nav-left img  { width: 15.587px; height: 15.587px; }
+.nav-right     { margin-left: auto; }
+.nav-right img { width: 18px; height: 4px; }
+.nav-title {
+  position: absolute;
+  left: 88px;
+  right: 88px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.4;
+  color: #090c14;
+}
+
+/* ============ 视频区 0,91 390x753 ============ */
+.video {
+  position: absolute;
+  left: 0;
+  top: 91px;
+  width: 390px;
+  height: 753px;
+  background: #000;
+  overflow: hidden;
+}
+.bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 一镜到底：从全屏缩到中央卡 167x275 @ frame(111,269) → 相对 .video(91) 为 top:178 */
+  transition:
+    left  0.7s cubic-bezier(0.7, 0, 0.2, 1),
+    top   0.7s cubic-bezier(0.7, 0, 0.2, 1),
+    width 0.7s cubic-bezier(0.7, 0, 0.2, 1),
+    height 0.7s cubic-bezier(0.7, 0, 0.2, 1),
+    border-radius 0.7s ease;
+}
+.frame.story-end .video {
+  background: transparent;
+  z-index: 6; /* 高于 .intergen(z=5) */
+  pointer-events: none; /* 让容器空白区域透传点击给改编页 */
+}
+.frame.story-end .bg-video {
+  left: 111px;
+  top: 145px;
+  width: 167px;
+  height: 275px;
+  border-radius: 24px;
+  pointer-events: auto;
+}
+
+/* 视频顶部黑色渐变 0,0 390x249 */
+.video-top-grad {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 390px;
+  height: 249px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.20) 7.29%,
+    rgba(0, 0, 0, 0.06) 32.54%,
+    rgba(0, 0, 0, 0.02) 49.23%,
+    rgba(0, 0, 0, 0.008) 67.92%,
+    rgba(0, 0, 0, 0)    81.64%
+  );
+  pointer-events: none;
+}
+
+/* 引导条底部白色 10% 分隔线 (Vector 392346806, top:49) */
+.guide-divider {
+  position: absolute;
+  left: 0;
+  top: 49px;
+  width: 390px;
+  height: 0.5px;
+  pointer-events: none;
+  z-index: 7;
+}
+
+/* ug顶部引导条 0,0 390x48 */
+.guide-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 390px;
+  height: 48px;
+  z-index: 7;
+}
+.guide-left {
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.app-icon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 32px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.app-icon img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 32px;
+}
+.guide-text {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+/* 打开看看 按钮 (298,9 80x30) -- 文案在 (~ x:310 / 中央) */
+.guide-btn {
+  position: absolute;
+  left: 298px;
+  top: 9px;
+  width: 80px;
+  height: 30px;
+  border-radius: 24px;
+  border: 0.5px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.20);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+.guide-btn span {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+}
+
+/* ============ 底部蒙层 0,544 390x300 (Figma 8:7003) ============ */
+.bottom-mask {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 390px;
+  height: 300px;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0)      0%,
+    rgba(0, 0, 0, 0.004)  6.6667%,
+    rgba(0, 0, 0, 0.020) 13.333%,
+    rgba(0, 0, 0, 0.047) 20%,
+    rgba(0, 0, 0, 0.086) 26.667%,
+    rgba(0, 0, 0, 0.137) 33.333%,
+    rgba(0, 0, 0, 0.200) 40%,
+    rgba(0, 0, 0, 0.267) 46.667%,
+    rgba(0, 0, 0, 0.333) 53.333%,
+    rgba(0, 0, 0, 0.400) 60%,
+    rgba(0, 0, 0, 0.463) 66.667%,
+    rgba(0, 0, 0, 0.514) 73.333%,
+    rgba(0, 0, 0, 0.553) 80%,
+    rgba(0, 0, 0, 0.580) 86.667%,
+    rgba(0, 0, 0, 0.596) 93.333%,
+    rgba(0, 0, 0, 0.600) 100%
+  );
+  z-index: 4;
+}
+
+/* ============ Content (整体上提 32px) ============ */
+.content {
+  position: absolute;
+  left: 0;
+  bottom: 132px;
+  width: 390px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  z-index: 6;
+}
+
+.user-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* User 行 (40x346)、整体上提 6px */
+.user-row {
+  position: relative;
+  width: 346px;
+  height: 40px;
+  flex-shrink: 0;
+  margin-top: -6px;
+  margin-bottom: 6px;
+}
+/* User 1: 12,0 40x40 */
+.user1 {
+  position: absolute;
+  left: 12px;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user1-ring {
+  position: absolute;
+  left: 12px;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+}
+/* + 标签 (Figma 9:7482, 左上角 35.5,20, 20x20) */
+.add-badge {
+  position: absolute;
+  left: 35.5px;
+  top: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* User 2: 61.5,12 28x28，覆盖在 User 3 之上，1px 镟空间隔 */
+.user2 {
+  position: absolute;
+  left: 61.5px;
+  top: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  z-index: 2;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+}
+/* User 3: 显示为完整圆形，左侧被 User 2 覆盖 */
+.user3-img {
+  position: absolute;
+  left: 85.5px;
+  top: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+}
+.user3-ring {
+  position: absolute;
+  left: 88.75px;
+  top: 12px;
+  width: 24.748px;
+  height: 28px;
+  pointer-events: none;
+}
+
+/* Name 行 */
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 24px 0 12px;
+  font-size: 16px;
+  white-space: nowrap;
+  width: 100%;
+}
+.name {
+  font-weight: 500;
+  line-height: 22px;
+  color: #ffffff;
+}
+.dot {
+  font-weight: 400;
+  line-height: 22px;
+  color: rgba(255, 255, 255, 0.88);
+  letter-spacing: 1px;
+}
+.cast {
+  font-weight: 400;
+  line-height: 22px;
+  color: rgba(255, 255, 255, 0.88);
+  letter-spacing: 1px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Prompt */
+.prompt {
+  padding: 0 24px 0 12px;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 21px;
+  color: rgba(255, 255, 255, 0.88);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 24px 20px 12px;
+  width: 100%;
+}
+.ai-tag {
+  font-family: Montserrat, "PingFang SC", sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.32);
+  white-space: nowrap;
+}
+
+/* ============ Sidebar 334,0 56x292 ============ */
+.sidebar {
+  width: 56px;
+  height: 292px;
+  padding: 0 8px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+.side-btn {
+  width: 40px;
+  height: 51px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  margin: 0 auto;
+}
+.side-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.side-icon img {
+  width: 28px;
+  height: 28px;
+}
+/* 分享 icon */
+.side-icon-share img {
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 0.5px 2px rgba(0, 0, 0, 0.3));
+}
+.side-count {
+  font-family: Montserrat, "PingFang SC", sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 11px;
+  color: #ffffff;
+  text-align: center;
+  text-shadow: 0 0.5px 4px rgba(0, 0, 0, 0.16);
+  white-space: nowrap;
+}
+
+/* 拍同款 缩略图 */
+.shoot {
+  flex: 1;
+  height: auto;
+  gap: 6px;
+}
+.shoot-thumb-wrap {
+  position: relative;
+  width: 40px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.shoot-thumb {
+  position: relative;
+  width: 32px;
+  height: 40px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  transform: rotate(-8deg);
+  background: #5d5648;
+}
+.shoot-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.shoot-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(93, 86, 72, 0) 0%, #5d5648 100%);
+  border-radius: 8px;
+  pointer-events: none;
+}
+.shoot-pencil {
+  position: absolute;
+  right: 3px;
+  bottom: 10px;
+  font-size: 20px;
+  line-height: 1;
+  transform: scaleX(-1);
+  text-shadow: 1px 1px 2px rgba(65, 56, 39, 0.6);
+}
+.shoot .side-count {
+  font-family: "PingFang SC", sans-serif;
+  font-weight: 500;
+}
+
+/* ============ CTA Button (整体上提 32px) ============ */
+.cta {
+  position: absolute;
+  left: 12px;
+  top: 718px;
+  width: 366px;
+  height: 48px;
+  border-radius: 54px;
+  border: 0;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+  z-index: 10;
+}
+.cta-bg-img {
+  position: absolute;
+  inset: 0;
+  background: url("assets/cd17c0f2c9bce4cda4ce2c99de09cca6b96a76c3.png") center/cover no-repeat;
+  border-radius: 54px;
+}
+.cta-bg {
+  position: absolute;
+  inset: 0;
+  background: #33ddff;
+  border-radius: 54px;
+}
+.cta-inner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+}
+.cta-icon {
+  width: 18px;
+  height: 18px;
+}
+.cta-text {
+  font-family: "PingFang SC", sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  color: #0f0f12;
+  white-space: nowrap;
+}
+
+/* ============ 视频结束后：底部 UI 下移 + 淡出 ============ */
+.content,
+.bottom-mask {
+  /* 反向回到视频流时延迟出场，等视频放大完成 (~0.7s) */
+  transition: transform 0.45s ease 0.55s, opacity 0.45s ease 0.55s, visibility 0s linear 0s;
+  will-change: transform, opacity;
+}
+.frame.story-end .content {
+  transform: translateY(40px);
+  opacity: 0 !important;
+  pointer-events: none;
+  visibility: hidden;
+  /* 进入改编页时立即淡出 */
+  transition: transform 0.5s ease, opacity 0.5s ease, visibility 0s linear 0.5s;
+}
+.frame.story-end .bottom-mask {
+  opacity: 0 !important;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+}
+
+/* ============ 故事改编页 (Figma 8:6470) ============ */
+.intergen {
+  position: absolute;
+  left: 0;
+  top: 91px;          /* 接在白色 nav 下面 */
+  width: 390px;
+  height: 753px;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s linear 0.7s;
+  z-index: 5;          /* 低于收缩后的 .video(z=6)，但高于默认 video 堆叠 */
+}
+.frame.story-end .intergen {
+  visibility: visible;
+  transition: visibility 0s linear 0s;
+}
+
+/* 模糊背景：复用海报，加重模糊 + 暗调 */
+.intergen-bg {
+  position: absolute;
+  inset: 0;
+  background: #282820 url("assets/2242ac9f6f471954dc46f5b8cecfe80755c0a449.png") center/cover no-repeat;
+  filter: blur(57px) brightness(0.55);
+  transform: scale(1.35) translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+.intergen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(30, 30, 26, 0.33) 0%,
+    rgba(18, 18, 16, 0.56) 66.6%,
+    rgba(18, 18, 16, 0.74) 100%);
+  pointer-events: none;
+}
+
+/* 标题 (居中, 距 frame 顶 195 → 距 intergen 顶 195-91=104) */
+.intergen-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 84px;
+  text-align: center;
+  font-family: "PingFang SC", sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.4;
+  color: #ddeaf0;
+  z-index: 2;
+}
+
+/* 中央三卡片舞台 */
+.intergen-stage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 137px;
+  height: 330px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 21px;
+  z-index: 2;
+  padding: 0 20px;
+}
+
+/* 左右小卡 */
+.ig-side {
+  flex-shrink: 0;
+  width: 66px;
+  height: 125px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  transition: transform 0.25s cubic-bezier(0.34, 1.1, 0.64, 1);
+  transform-origin: center center;
+}
+.ig-side.is-active {
+  transform: scale(1.1);
+}
+.ig-side-thumb {
+  width: 62px;
+  height: 95px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #2a2a26;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin: 1px;
+}
+.ig-side-thumb img,
+.ig-side-thumb video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ig-side-label {
+  margin-top: 8px;
+  font-family: "PingFang SC", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ddeaf0;
+}
+
+/* 中央卡 (Figma 9:7864)
+   外层暗底板 175x323 r=28 bg rgba(0,0,0,0.43)
+   内部图片卡 167x275 r=24 距外层 left/right 4px, top 4px (inner top 269 - outer top 265),
+   带 1px rgba(255,255,255,0.8) 描边 + 内阴影 rgba(79,110,133,0.7) blur 22.71px
+   底部 44px 留白放"拖动以进行选择" (居中, frame y=566 → 内 y=301) */
+.ig-center {
+  position: relative;
+  width: 175px;
+  height: 323px;
+  border-radius: 28px;
+  background: rgba(0, 0, 0, 0.43);
+  flex-shrink: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+  transition: transform 0.2s ease;
+  z-index: 3;
+}
+.ig-center.is-dragging {
+  cursor: grabbing;
+  transition: none;
+}
+/* 透明拖动手柄：覆盖整张中央卡（视频 + 黑底板） */
+.ig-drag-handle {
+  display: none;
+  position: absolute;
+  /* 与中央卡外层 .ig-center 175x323 对齐：水平居中, 顶部贴视频顶 */
+  left: 107px;
+  top: 145px;
+  width: 175px;
+  height: 290px;
+  z-index: 9; /* 高于 .video(z=6) 与 .intergen(z=5)，低于 cta(z=10) */
+  cursor: grab;
+  touch-action: none;
+  background: transparent;
+  border-radius: 28px;
+}
+.frame.story-end .ig-drag-handle { display: block; }
+.ig-center.is-dragging ~ * .ig-drag-handle,
+.ig-drag-handle.is-dragging { cursor: grabbing; }
+.ig-center-card {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 167px;
+  height: 275px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transform-origin: center center;
+  transition: transform 0.2s cubic-bezier(0.34, 1.1, 0.64, 1);
+}
+/* 进入改编页：中央卡持续轻微悬浮抖动 */
+@keyframes ig-center-float {
+  0%   { transform: translate(1.30px, 1.30px) rotate(0deg); }
+  20%  { transform: translate(0, 0) rotate(0deg); }
+  40%  { transform: translate(1.30px, -1.30px) rotate(0deg); }
+  60%  { transform: translate(-0.65px, -0.65px) rotate(0deg); }
+  80%  { transform: translate(0.65px, -0.65px) rotate(0deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+.frame.story-end.intergen-ready .ig-center,
+.frame.story-end.intergen-ready .bg-video {
+  animation: ig-center-float 4.5s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+/* 拖动时停止抖动，避免与缩放/位移叠加 */
+.frame.story-end.drag-left .ig-center,
+.frame.story-end.drag-right .ig-center,
+.frame.story-end.drag-left .bg-video,
+.frame.story-end.drag-right .bg-video,
+.ig-center.is-dragging {
+  animation: none;
+}
+.ig-center-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ig-center-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 24px;
+  pointer-events: none;
+}
+.ig-replay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+.ig-replay img {
+  width: 28px;
+  height: 28px;
+}
+.ig-replay span {
+  font-family: "PingFang SC", sans-serif;
+  font-size: 12px;
+  line-height: 1;
+}
+.ig-tip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* 中央卡外层 323 - 底距 ≈ 22 → 居中放在底部留白带 */
+  bottom: 14px;
+  text-align: center;
+  font-family: "PingFang SC", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  color: #ddeaf0;
+}
+.ig-tip .ig-tip-default,
+.ig-tip .ig-tip-active {
+  display: inline-block;
+  transition: opacity 0.2s ease;
+}
+.ig-tip .ig-tip-active {
+  position: absolute;
+  left: 0;
+  right: 0;
+  opacity: 0;
+}
+.frame.drag-left .ig-tip .ig-tip-default,
+.frame.drag-right .ig-tip .ig-tip-default { opacity: 0; }
+.frame.drag-left .ig-tip .ig-tip-active,
+.frame.drag-right .ig-tip .ig-tip-active { opacity: 1; }
+
+/* prompt (frame y=605 → intergen y=605-91=514) */
+.intergen-prompt {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 494px;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  font-family: "PingFang SC", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(221, 234, 240, 0.3);
+  z-index: 4;
+  padding: 0 24px;
+  margin: 0;
+  cursor: pointer;
+}
+/* 三种文案：默认 / 拖到左 / 拖到右 — 交换时透明度过渡 */
+.intergen-prompt .prompt-default,
+.intergen-prompt .prompt-left,
+.intergen-prompt .prompt-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.intergen-prompt .prompt-left,
+.intergen-prompt .prompt-right {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  text-align: center;
+  display: block;
+}
+/* 默认显示"在看一次" */
+.intergen-prompt .prompt-default { opacity: 1; pointer-events: auto; }
+/* 拖到左/右 */
+.frame.drag-left .intergen-prompt .prompt-default,
+.frame.drag-right .intergen-prompt .prompt-default { opacity: 0; pointer-events: none; }
+.frame.drag-left .intergen-prompt .prompt-left { opacity: 1; }
+.frame.drag-right .intergen-prompt .prompt-right { opacity: 1; }
+/* 拖动态文案颜色稍亮一点 */
+.frame.drag-left .intergen-prompt,
+.frame.drag-right .intergen-prompt {
+  color: rgba(221, 234, 240, 0.85);
+  font-weight: 400;
+}
+.prompt-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* feed 标题行 (frame y=727 → intergen y=636) */
+.intergen-feed-header {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 588px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "PingFang SC", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(221, 234, 240, 0.4);
+  z-index: 2;
+}
+.feed-arrow {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* feed 区 (frame y=761 → intergen y=670) */
+.intergen-feed {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 622px;
+  bottom: 0;
+  display: flex;
+  gap: 4px;
+  padding: 0 2px;
+  z-index: 2;
+  overflow: hidden;
+}
+.feed-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.feed-card {
+  position: relative;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #2a2a2a;
+}
+.feed-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+.feed-title {
+  padding: 6px 8px 4px;
+  font-family: "PingFang SC", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ddeaf0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.feed-card.r-tl { border-top-left-radius: 24px; }
+.feed-card.r-tr { border-top-right-radius: 24px; }
+.feed-card.r-bl { border-bottom-left-radius: 24px; }
+.feed-card.r-br { border-bottom-right-radius: 24px; }
+
+/* 底部遮罩 (Figma 8:6490, 390x146) - 贴底 */
+.intergen-bottom-mask {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 390px;
+  height: 304px;
+  pointer-events: none;
+  z-index: 8; /* 高于 feed(z=2)，低于 cta(z=10) */
+  opacity: 0.57;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0)      0%,
+    rgba(0, 0, 0, 0.004)  6.667%,
+    rgba(0, 0, 0, 0.020) 13.333%,
+    rgba(0, 0, 0, 0.047) 20%,
+    rgba(0, 0, 0, 0.086) 26.667%,
+    rgba(0, 0, 0, 0.137) 33.333%,
+    rgba(0, 0, 0, 0.200) 40%,
+    rgba(0, 0, 0, 0.267) 46.667%,
+    rgba(0, 0, 0, 0.333) 53.333%,
+    rgba(0, 0, 0, 0.400) 60%,
+    rgba(0, 0, 0, 0.463) 66.667%,
+    rgba(0, 0, 0, 0.514) 73.333%,
+    rgba(0, 0, 0, 0.553) 80%,
+    rgba(0, 0, 0, 0.580) 86.667%,
+    rgba(0, 0, 0, 0.596) 93.333%,
+    rgba(0, 0, 0, 0.37) 100%
+  );
+}
+
+/* ============ 改编页元素入场动画（与视频收缩同步） ============ */
+/* 模糊背景 + 暗色叠加：渐显 */
+.intergen-bg,
+.intergen::after {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.frame.story-end .intergen-bg,
+.frame.story-end .intergen::after {
+  opacity: 1;
+}
+
+/* 标题：从上方淡入 */
+.intergen-title {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.frame.story-end .intergen-title {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.55s;
+}
+
+/* 左右小卡：弹性滑入 */
+.ig-side {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.ig-side.ig-left {
+  transform: translateX(-160px);
+  transition: opacity 0.45s ease, transform 0.7s cubic-bezier(0.34, 1.1, 0.64, 1);
+}
+.ig-side.ig-right {
+  transform: translateX(160px);
+  transition: opacity 0.45s ease, transform 0.7s cubic-bezier(0.34, 1.1, 0.64, 1);
+}
+.frame.story-end .ig-side.ig-left,
+.frame.story-end .ig-side.ig-right {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.6s;
+}
+/* 入场完成后：transform 切换到快速过渡，避免缩回时受 0.6s 延迟影响 */
+.frame.story-end.intergen-ready .ig-side.ig-left,
+.frame.story-end.intergen-ready .ig-side.ig-right {
+  transition: transform 0.2s cubic-bezier(0.34, 1.1, 0.64, 1);
+}
+/* 拖拽选中时放大 1.1x（覆盖 translateX(0)）*/
+.frame.story-end .ig-side.ig-left.is-active,
+.frame.story-end .ig-side.ig-right.is-active {
+  transform: translateX(0) scale(1.1);
+  transition: transform 0.2s cubic-bezier(0.34, 1.1, 0.64, 1);
+}
+
+/* 中央卡内的静态海报 + 暗化层：始终隐藏，由真实视频占位 */
+.ig-center-img,
+.ig-center-overlay {
+  display: none;
+}
+
+/* 提示 / prompt / feed 标题 / feed / 底部遮罩 / 中央卡底板：稍后渐显 */
+.ig-tip,
+.intergen-prompt,
+.intergen-feed-header,
+.intergen-feed,
+.intergen-bottom-mask,
+.ig-center {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.ig-center-card {
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.2s cubic-bezier(0.34, 1.1, 0.64, 1);
+}
+.frame.story-end .ig-tip,
+.frame.story-end .intergen-prompt,
+.frame.story-end .intergen-feed-header,
+.frame.story-end .intergen-feed,
+.frame.story-end .intergen-bottom-mask,
+.frame.story-end .ig-center,
+.frame.story-end .ig-center-card {
+  opacity: 1;
+  transition-delay: 0.65s;
+}
+/* 中央卡的 transform（拖动缩放）不要被 0.65s 渐显延迟拖慢 */
+.frame.story-end .ig-center-card {
+  transition: opacity 0.5s ease 0.65s, transform 0.2s cubic-bezier(0.34, 1.1, 0.64, 1) 0s;
+}
+/* 底部遮罩需要保留 0.57 自定义透明度 */
+.frame.story-end .intergen-bottom-mask {
+  opacity: 0.57;
+}
+
+/* ============ 适配较小屏幕：等比缩放 ============ */
+@media (max-height: 844px), (max-width: 390px) {
+  body {
+    overflow: hidden;
+  }
+  .frame {
+    transform: scale(min(calc(100vw / 390), calc(100vh / 844)));
+    transform-origin: center center;
+  }
+}
